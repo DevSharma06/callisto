@@ -56,7 +56,7 @@ const AddQuestion: React.FC<AddQuestionProps> = ({ onSubmitData }) => {
     }));
 
     const formData: Question = {
-      question,
+      questionText: question,
       category,
       options: formOptions,
     };
@@ -98,7 +98,7 @@ const AddQuestion: React.FC<AddQuestionProps> = ({ onSubmitData }) => {
       <form onSubmit={addQuestion}>
         <p className="font-semibold text-xl text-left">Add Question</p>
         <div className="text-left mt-3">
-          <p className="mb-2 text-lg">Question:</p>
+          <p className="mb-2">Question:</p>
           <textarea
             className="w-full h-40 bg-gray-900 border border-gray-700 rounded-md p-3"
             onChange={(e) => setQuestion(e.target.value)}
@@ -106,7 +106,7 @@ const AddQuestion: React.FC<AddQuestionProps> = ({ onSubmitData }) => {
           />
         </div>
         <div className="flex mb-2 mt-2 items-center">
-          <label className="mr-2 text-lg" htmlFor="category">
+          <label className="mr-2" htmlFor="category">
             Select Category
           </label>
           <select
@@ -123,9 +123,7 @@ const AddQuestion: React.FC<AddQuestionProps> = ({ onSubmitData }) => {
             ))}
           </select>
         </div>
-        <p className="text-left text-lg mb-2">
-          Select the radio button for correct option
-        </p>
+        <p className="text-left mb-2">Select the correct option</p>
         <div className="mb-3">
           {options.map((opt, index) => (
             <div className="flex items-center mb-2">
@@ -166,7 +164,7 @@ export type Option = {
 };
 
 export type Question = {
-  question: string;
+  questionText: string;
   category: string;
   options: Option[];
 };
