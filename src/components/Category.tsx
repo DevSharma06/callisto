@@ -2,7 +2,7 @@ import { useState } from "react";
 
 function Category() {
   const cardBase =
-    "p-4 w-50 rounded-lg shadow-md content-center font-semibold cursor-pointer";
+    "p-3 w-60 rounded-lg shadow-md content-center font-semibold text-lg cursor-pointer";
   const selectedStyle = "bg-[#0284C7] text-black";
   const unselectedStyle = "bg-gray-800  text-white";
   const [selectedCategory, setSelectedCategory] = useState(
