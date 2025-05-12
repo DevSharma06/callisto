@@ -33,10 +33,10 @@ const Questions: React.FC<QuestionCardProps> = ({ questions, onDelete }) => {
           >
             🗑️
           </button>
-          <h2 className="text-xl text-left font-semibold mb-2 mr-7">
+          <h2 className="whitespace-pre-line text-xl text-left font-semibold mb-2 mr-7">
             {index + 1}. {question.questionText}
           </h2>
-          <p className="text-left font-semibold text-base text-gray-400 mb-4">
+          <p className="text-left font-semibold text-base text-gray-400 mb-4 ">
             Category: {question.category}
           </p>
           <div className="grid grid-cols-2 gap-4">

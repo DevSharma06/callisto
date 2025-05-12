@@ -103,6 +103,7 @@ const AddQuestion: React.FC<AddQuestionProps> = ({ onSubmitData }) => {
             className="w-full h-40 bg-gray-900 border border-gray-700 rounded-md p-3"
             onChange={(e) => setQuestion(e.target.value)}
             value={question}
+            maxLength={1000}
           />
         </div>
         <div className="flex mb-2 mt-2 items-center">
@@ -135,6 +136,7 @@ const AddQuestion: React.FC<AddQuestionProps> = ({ onSubmitData }) => {
                 id={index.toString()}
                 onChange={() => handleCorrectOptionChange(index)}
                 checked={opt.isCorrect}
+                maxLength={500}
               />
               <label
                 htmlFor={index.toString()}
