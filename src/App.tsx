@@ -1,42 +1,41 @@
-import { useState } from "react";
-import "./App.css";
-import AddQuestion, { Question } from "./components/AddQuestion";
-import Category from "./components/Category";
-import Questions from "./components/Questions";
+import { useEffect, useState } from "react";
+import { LoginRequest } from "./data/objects";
+import { LoginService } from "./services/LoginService";
+import HomePage from "./HomePage";
+import LoginForm from "./components/LoginForm";
 
 function App() {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
-  const handleAddQuestion = (data: Question) => {
-    console.log("Received: ", data);
-    const newQuestions = [...questions];
-    newQuestions.push(data);
-    setQuestions(newQuestions);
+  useEffect(() => {
+    const expiresAt = localStorage.getItem("expiredAt");
+    if (!token || !expiresAt || Date.now() > parseInt(expiresAt)) {
+      // logoutUser();
+    }
+  }, [token]);
+
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      const loginRequest: LoginRequest = { username, password };
+      const response = await LoginService.signin(loginRequest);
+
+      console.log("Login response: ", await response.data);
+      const { token, expiresIn } = await response.data;
+
+      const expiresAt = Date.now() + expiresIn;
+      localStorage.setItem("token", token);
+      localStorage.setItem("expiresAt", expiresAt.toString());
+      setToken(token);
+    } catch (err) {
+      console.error("Auth error:", err);
+      throw err;
+    }
   };
 
-  const handleDeleteQuestion = (questionText: string) => {
-    setQuestions((prev) => prev.filter((q) => q.questionText !== questionText));
+  const logoutUser = () => {
+    localStorage.clear();
+    setToken(null);
   };
-
-  return (
-    <div className="flex flex-col h-screen">
-      <Category />
-
-      <div className="flex-grow min-h-0 flex">
-        <div className="flex-1 p-4 bg-[#313B4A] rounded-lg shadow-md ml-4 mb-4 mr-2">
-          <div className="h-full min-h-0 overflow-auto pr-3">
-            <AddQuestion onSubmitData={handleAddQuestion} />
-          </div>
-        </div>
-
-        <div className="flex-1 p-4 bg-[#313B4A] rounded-lg shadow-md mr-4 mb-4 ml-2">
-          <div className="h-full min-h-0 overflow-auto pr-3">
-            <Questions questions={questions} onDelete={handleDeleteQuestion} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return token ? <HomePage /> : <LoginForm onLogin={handleLogin} />;
 }
-
 export default App;

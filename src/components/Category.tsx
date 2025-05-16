@@ -1,17 +1,15 @@
-import { useState } from "react";
+import { CategoryType } from "../data/enums";
 
-function Category() {
+type Props = {
+  selectedCategory: CategoryType;
+  onCategoryClick: (value: CategoryType) => void;
+};
+
+const Category = ({ selectedCategory, onCategoryClick }: Props) => {
   const cardBase =
     "p-3 w-60 rounded-lg shadow-md content-center font-semibold text-lg cursor-pointer";
   const selectedStyle = "bg-[#0284C7] text-black";
   const unselectedStyle = "bg-gray-800  text-white";
-  const [selectedCategory, setSelectedCategory] = useState(
-    CategoryType.english
-  );
-
-  const onCategoryClick = (categoryType: CategoryType) => {
-    setSelectedCategory(categoryType);
-  };
 
   return (
     <div className="flex space-x-4 justify-center m-4">
@@ -53,13 +51,6 @@ function Category() {
       </div>
     </div>
   );
-}
+};
 
 export default Category;
-
-enum CategoryType {
-  english,
-  ga,
-  qa,
-  reasoning,
-}
