@@ -6,6 +6,7 @@ import Questions from "./components/Questions";
 import { CategoryType } from "./data/enums";
 import { QuestionService } from "./services/QuestionService";
 import { Question, QuestionCategory } from "./data/objects";
+import Toast from "./components/Toast";
 
 function HomePage() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -17,10 +18,10 @@ function HomePage() {
     setSelectedCategory(categoryType);
   };
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchQuestions = async () => {
+      setLoading(true);
       try {
         const response = await QuestionService.getQuestions(
           `/${selectedCategory}`
@@ -30,7 +31,7 @@ function HomePage() {
         setQuestions(extractedQuestions);
       } catch (err) {
         console.error("Failed to load questions:", err);
-        setError("Failed to load questions.");
+        showToast("Failed to load questions.");
       } finally {
         setLoading(false);
       }
@@ -39,6 +40,7 @@ function HomePage() {
     fetchQuestions();
 
     const fetchCategories = async () => {
+      setLoading(true);
       try {
         const response = await QuestionService.getCategories(
           `/${selectedCategory}`
@@ -47,7 +49,7 @@ function HomePage() {
         setCategories(categories);
       } catch (err) {
         console.error("Failed to load categories:", err);
-        setError("Failed to load categories.");
+        showToast("Failed to load categories.");
       } finally {
         setLoading(false);
       }
@@ -65,7 +67,7 @@ function HomePage() {
       await QuestionService.addQuestion(`/${selectedCategory}`, data);
     } catch (err) {
       console.log("Failed to add question", err);
-      setError("Failed to add question");
+      showToast("Failed to add question");
     }
   };
 
@@ -75,8 +77,15 @@ function HomePage() {
       await QuestionService.deleteQuestion(`/${selectedCategory}`, id);
     } catch (err) {
       console.log("Failed to delete", err);
-      setError("Failed to delete");
+      showToast("Failed to delete");
     }
+  };
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   return (
@@ -98,14 +107,39 @@ function HomePage() {
 
         <div className="flex-1 p-4 bg-[#313B4A] rounded-lg shadow-md mr-4 mb-4 ml-2">
           <div className="h-full min-h-0 overflow-auto pr-3">
-            <Questions
-              questions={questions}
-              onDelete={handleDeleteQuestion}
-              categories={categories}
-            />
+            {loading && (
+              <div className="fixed inset-0 z-50 pointer-events-none">
+                <div className="absolute top-1/2 left-3/4 transform -translate-x-1/2 -translate-y-1/2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+                    <span className="text-white text-lg font-semibold animate-pulse">
+                      Loading...
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            {!loading && questions.length == 0 ? (
+              <div className="fixed inset-0 z-50 pointer-events-none">
+                <div className="absolute top-1/2 left-3/4 transform -translate-x-1/2 -translate-y-1/2">
+                  <div className="flex items-center text-white text-lg font-semibold">
+                    No Questions added
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Questions
+                questions={questions}
+                onDelete={handleDeleteQuestion}
+                categories={categories}
+              />
+            )}
           </div>
         </div>
       </div>
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
+      )}
     </div>
   );
 }

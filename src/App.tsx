@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LoginRequest } from "./data/objects";
 import { LoginService } from "./services/LoginService";
 import HomePage from "./HomePage";
@@ -6,13 +6,6 @@ import LoginForm from "./components/LoginForm";
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
-
-  useEffect(() => {
-    const expiresAt = localStorage.getItem("expiredAt");
-    if (!token || !expiresAt || Date.now() > parseInt(expiresAt)) {
-      // logoutUser();
-    }
-  }, [token]);
 
   const handleLogin = async (username: string, password: string) => {
     try {
@@ -22,7 +15,7 @@ function App() {
       console.log("Login response: ", await response.data);
       const { token, expiresIn } = await response.data;
 
-      const expiresAt = Date.now() + expiresIn;
+      const expiresAt = Date.now() + expiresIn * 1000;
       localStorage.setItem("token", token);
       localStorage.setItem("expiresAt", expiresAt.toString());
       setToken(token);
@@ -32,10 +25,6 @@ function App() {
     }
   };
 
-  const logoutUser = () => {
-    localStorage.clear();
-    setToken(null);
-  };
   return token ? <HomePage /> : <LoginForm onLogin={handleLogin} />;
 }
 export default App;

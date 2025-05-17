@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Question, QuestionCategory } from "../data/objects";
+import Toast from "./Toast";
 
 type QuestionCardProps = {
   questions: Question[];
@@ -21,7 +22,17 @@ const Questions: React.FC<QuestionCardProps> = ({
 
   const confirmDelete = () => {
     setShowDialog(false);
-    if (questionToDelete) onDelete(questionToDelete);
+    if (questionToDelete) {
+      onDelete(questionToDelete);
+      showToast();
+    }
+  };
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = () => {
+    setToastMessage("Question deleted");
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   return (
@@ -88,6 +99,10 @@ const Questions: React.FC<QuestionCardProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
       )}
     </div>
   );

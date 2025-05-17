@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Question, QuestionCategory } from "../data/objects";
 import { Option } from "../data/objects";
+import Toast from "./Toast";
 
 type AddQuestionProps = {
   onSubmitData: (data: Question) => void;
@@ -65,6 +66,8 @@ const AddQuestion: React.FC<AddQuestionProps> = ({
 
     onSubmitData(formData);
 
+    showToast();
+
     clearFormFields();
   };
 
@@ -92,9 +95,16 @@ const AddQuestion: React.FC<AddQuestionProps> = ({
   const handleCorrectOptionChange = (index: number) => {
     const newOptions = options.map((opt, i) => ({
       ...opt,
-      isCorrect: i === index,
+      correct: i === index,
     }));
     setOptions(newOptions);
+  };
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = () => {
+    setToastMessage("Question Added");
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   return (
@@ -167,6 +177,9 @@ const AddQuestion: React.FC<AddQuestionProps> = ({
 
         <button>Add Question</button>
       </form>
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
+      )}
     </div>
   );
 };

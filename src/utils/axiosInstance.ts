@@ -10,6 +10,13 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+    const expiresAt = localStorage.getItem("expiresAt");
+
+    if (!token || !expiresAt || Date.now() > parseInt(expiresAt)) {
+      localStorage.clear();
+      window.location.reload();
+      return Promise.reject(new Error("Session expired"));
+    }
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,7 +31,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error);
     return Promise.reject(error);
   }
 );
