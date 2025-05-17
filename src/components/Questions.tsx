@@ -1,22 +1,38 @@
 import { useState } from "react";
-import { Question } from "./AddQuestion";
+import { Question, QuestionCategory } from "../data/objects";
+import Toast from "./Toast";
 
 type QuestionCardProps = {
   questions: Question[];
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
+  categories: QuestionCategory[];
 };
 
-const Questions: React.FC<QuestionCardProps> = ({ questions, onDelete }) => {
+const Questions: React.FC<QuestionCardProps> = ({
+  questions,
+  onDelete,
+  categories,
+}) => {
   const [showDialog, setShowDialog] = useState(false);
-  const [questionToDelete, setQuestionToDelete] = useState("");
-  const handleDelete = (id: string) => {
+  const [questionToDelete, setQuestionToDelete] = useState(0);
+  const handleDelete = (id: number) => {
     setShowDialog(true);
     setQuestionToDelete(id);
   };
 
   const confirmDelete = () => {
     setShowDialog(false);
-    if (questionToDelete) onDelete(questionToDelete);
+    if (questionToDelete) {
+      onDelete(questionToDelete);
+      showToast();
+    }
+  };
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = () => {
+    setToastMessage("Question deleted");
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   return (
@@ -27,23 +43,27 @@ const Questions: React.FC<QuestionCardProps> = ({ questions, onDelete }) => {
           className="relative text-white bg-gray-800 p-3 rounded-lg mb-2"
         >
           <button
-            onClick={() => handleDelete(question.questionText)} // Add your delete function here
+            onClick={() => handleDelete(question?.id ?? 0)} // Add your delete function here
             className="absolute top-2 right-2 text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
             title="Delete question"
           >
             🗑️
           </button>
-          <h2 className="text-xl text-left font-semibold mb-2 mr-7">
+          <h2 className="whitespace-pre-line text-xl text-left font-semibold mb-2 mr-7">
             {index + 1}. {question.questionText}
           </h2>
-          <p className="text-left font-semibold text-base text-gray-400 mb-4">
-            Category: {question.category}
+          <p className="text-left font-semibold text-base text-gray-400 mb-4 ">
+            Category:{" "}
+            {
+              categories.find((cat) => cat.id == question.categoryID)
+                ?.categoryName
+            }
           </p>
           <div className="grid grid-cols-2 gap-4">
             {question.options.map((opt, idx) => (
               <div key={idx} className="p-2 rounded bg-gray-700 text-white">
                 <span className="font-medium">{opt.optionText}</span>
-                {opt.isCorrect && (
+                {opt.correct && (
                   <span className="ml-2 text-green-400">(Correct)</span>
                 )}
               </div>
@@ -79,6 +99,10 @@ const Questions: React.FC<QuestionCardProps> = ({ questions, onDelete }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {toastMessage && (
+        <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
       )}
     </div>
   );
