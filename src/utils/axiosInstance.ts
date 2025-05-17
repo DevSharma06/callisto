@@ -9,6 +9,13 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
+    const isAuthEndpoint =
+      config.url?.includes("/signin") || config.url?.includes("/signup");
+
+    if (isAuthEndpoint) {
+      return config; // Skip token verification for auth endpoints
+    }
+
     const token = localStorage.getItem("token");
     const expiresAt = localStorage.getItem("expiresAt");
 
