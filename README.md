@@ -1,54 +1,119 @@
-# React + TypeScript + Vite
+# 🌐 Quiz App Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive, single-page quiz application frontend built using **React**, **Vite**, and **Tailwind CSS**, with token-based authentication and protected API access via Axios interceptors.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## Expanding the ESLint configuration
+* 🔐 JWT Authentication with token handling via Axios interceptor
+* 📆 Modular component architecture
+* 📝 Create, display, and edit questions and options
+* 🌈 Toast notifications
+* ⚙️ REST API integration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 📆 Tech Stack
+
+* **React (Vite)**
+* **TypeScript**
+* **Tailwind CSS**
+* **Axios**
+* **React Context / useState (for auth + global state)**
+
+---
+
+## 🚀 Getting Started
+
+### 📁 Clone the repo
+
+```bash
+git clone https://github.com/DevSharma06/callisto.git
+cd callisto
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 📦 Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm install
 ```
+
+### ▶️ Run the app
+
+```bash
+npm run dev
+```
+
+> App runs on [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 🔐 Authentication Flow
+
+* Login form sends credentials to `/api/auth/signin`
+* JWT is stored in `localStorage`
+* Axios interceptor attaches `Authorization: Bearer <token>` to every request
+* If token is expired, user is logged out and redirected to login view
+
+---
+
+## ⚙️ Axios Setup
+
+```ts
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+```
+
+---
+
+## 📁 Folder Structure
+
+```
+src/
+├── components/       # Reusable components (inputs, toast, loader, etc.)
+├── pages/            # Page-level components (Login, Dashboard, etc.)
+├── services/         # API integration via Axios
+├── context/          # Auth context or global state (if any)
+├── App.tsx
+└── main.tsx
+```
+
+---
+
+## ✅ Available Scripts
+
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start development server |
+| `npm run build`   | Build for production     |
+| `npm run preview` | Preview production build |
+
+---
+
+## 📄 Environment Variables
+
+Create a `.env` file in the root:
+
+```bash
+VITE_API_URL=http://localhost:8080/api
+```
+
+---
+
+## 🧪 Troubleshooting
+
+* **CORS Issues?** Make sure the backend allows requests from `http://localhost:5173`
+* **Token not set?** Verify `localStorage.getItem("token")` is returning a value
+* **Axios errors?** Check browser console and Network tab for failed requests
+
+---
+
+## 🙋‍♂️ Author
+
+Developed by Devender Sharma
